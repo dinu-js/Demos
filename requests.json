@@ -1,0 +1,54 @@
+[{
+    "recurrence": {
+      "pattern": {
+        "type": "weekly",
+        "interval": 1,
+        "daysOfWeek": [
+          "Monday"
+        ]
+      },
+      "range": {
+        "type": "endDate",
+        "startDate": "2017-09-04",
+        "endDate": "2017-12-31"
+      }
+    }
+  },
+  {
+    "recurrence": {
+      "pattern": {
+        "type": "daily",
+        "interval": 1
+      },
+      "range": {
+        "type": "endDate",
+        "startDate": "2017-09-04",
+        "endDate": "2017-12-31"
+      }
+    }
+  },
+  {
+    "recurrence": {
+      "pattern": {
+        "type": "monthly",
+        "interval": 1,
+        "dayOfMonth":"14",
+        "daysOfWeek": [
+          "Monday"
+        ]
+      },
+      "range": {
+        "type": "endDate",
+        "startDate": "2017-09-04",
+        "endDate": "2017-12-31"
+      },
+      "range2": {
+        "type": "numbered",
+        "numberOfOccurrences": 10
+      },
+      "range3": {
+        "type": "noEnd"
+      }
+    }
+  }
+  ]
