@@ -1,8 +1,8 @@
 const startDate = new Date();
-const endDate = '2019-05-30T08:53:20.320Z'; //on case
+const endDate = '2025-05-31T24:00:00.000Z'; //on case
 const occurences = 1; //after case
 const interval = 1; //every case
-const daysOfWeek = ['Monday','Wednesday', 'Friday']; //for weekly and monthly
+const daysOfWeek = ['Wednesday', 'Friday']; //for weekly and monthly
 function convertDaysToNum(dates){
     return dates.map(day => {
         let dayNum;
@@ -52,7 +52,7 @@ function calculateDatesDaily(startDate, interval, occurences, endDate){
             compare = currentDt - new Date(endDate);
         }
     }
-    console.log("dates array",datesArr);
+    //console.log("dates array",datesArr);
 }
 
 function calculateDatesWeekly(startDate, interval, daysOfWeek, occurences, endDate){
@@ -77,7 +77,6 @@ function calculateDatesWeekly(startDate, interval, daysOfWeek, occurences, endDa
             occurences --;
         }
             while(occurences !== 0){
-                console.log(lastAndFirstDayDiff)
                 for(let i=0; i<daysOfWeekArrLength;i++){
                     if(datesArr.length === 0){
                         datesArr.push(new Date(currentDt));
@@ -98,38 +97,35 @@ function calculateDatesWeekly(startDate, interval, daysOfWeek, occurences, endDa
         let compare = currentDt - new Date(endDate);
         if(currentDt.getDay() !== daysOfWeekArr[0]){
             for(let i=daysOfWeekArr.indexOf(currentDt.getDay()); i<daysOfWeekArrLength;i++){
-                if(compare >=0){
-                    break;
-                }
-                if(datesArr.length === 0){
-                    
-                }
-                else if(datesArr.length === 0){
+                if(datesArr.length !== 0){
                     let diff = daysOfWeekArr[i] - daysOfWeekArr[i-1];
                     currentDt = new Date(currentDt.setDate(currentDt.getDate() + diff));
+                    compare = currentDt - new Date(endDate);
                 }
-                datesArr.push(new Date(currentDt));
-                compare = currentDt - new Date(endDate);
+                if(compare < 0){
+                    datesArr.push(new Date(currentDt));
+                }else{
+                    break;
+                }
             }
             
         }
         while(compare < 0){
-            console.log(lastAndFirstDayDiff)
             for(let i=0; i<daysOfWeekArrLength;i++){
-                if(i === 0 && datesArr.length !== 0){
+                if(i === 0 && datesArr.length !==0 ){
                     currentDt = new Date(currentDt.setDate(currentDt.getDate() + lastAndFirstDayDiff));
+                    compare = currentDt - new Date(endDate);
                 }
-                else{
+                else if(datesArr.length !== 0){
                     let diff = daysOfWeekArr[i] - daysOfWeekArr[i-1];
                     currentDt = new Date(currentDt.setDate(currentDt.getDate() + diff));
-                }
-
-                if(compare < 0){
                     compare = currentDt - new Date(endDate);
+                }
+                if(compare < 0){
                     datesArr.push(new Date(currentDt));
                 }else{
                     break;
-                } 
+                }
             }
         }
 
@@ -138,19 +134,13 @@ function calculateDatesWeekly(startDate, interval, daysOfWeek, occurences, endDa
     console.log(datesArr);
 }
 
-calculateDatesWeekly(startDate, interval, daysOfWeek, 2, null);
+function calculateDatesMonthly(startDate, interval, daysOfWeek, occurences, endDate){
 
-// daysOfWeekArr.forEach((day,index) => {
-//     if(datesArr.length === 0){
-//         tempArr.push(new Date(currentDt));
-//     }else{
-//         let diff = daysOfWeekArr[index] - daysOfWeekArr[index-1];
-//         tempArr.push(new Date(tempArr[tempArr.length -1] + diff))
-//     }
-// })
+}
 
-//calculateDatesDaily(startDate, interval, occurences, null);
-
-
-
-//console.log("days array : ",convertDaysToNum(daysOfWeek))
+let starTim = new Date().getTime();
+for(let i=0;i<100;i++){
+    calculateDatesDaily(startDate, interval, null, endDate);
+}
+let endTim = new Date().getTime();
+console.log('time taken ',endTim - starTim)
