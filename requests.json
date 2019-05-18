@@ -52,3 +52,58 @@
     }
   }
   ]
+//////////////////////////////
+{
+    "meetingId": "1528",
+    "organizerProfileId": "735185",
+    "projectId": null,
+    "locationId": null,
+    "taskId": null,
+    "bridgeId": null,
+    "agendaNotesId": null,
+    "meetingData": {
+      "duration": "1",
+      "reminder": "",
+      "date_time": "2019-03-19T17:00:00.000Z",
+      "frequency": "",
+      "outlook_id": "",
+      "recurrence": {
+        "range": {
+          "type": "noEnd"
+        },
+        "pattern": {
+          "type": "daily",
+          "interval": 1
+        }
+      },
+      "flexibility": "NONE",
+      "agenda_notes": [],
+      "meeting_type": "",
+      "attachment_id": "",
+      "meeting_title": "Recurrence Test Never",
+      "meeting_status": "Pending",
+      "recurrenceType": "noEnd",
+      "meeting_end_time": "2019-03-19T19:00:00.000Z",
+      "external_attendee": [
+        "abc@gmail.com"
+      ],
+      "external_location": "",
+      "allow_notification": "",
+      "frequency_end_date": "",
+      "meeting_start_time": "2019-03-19T17:00:00.000Z",
+      "additional_attendees": 0
+    },
+    "MeetingAttendees.meetingId": "1528",
+    "MeetingAttendees.userProfileId": "735185"
+  }
+
+///////////////////////
+ "pattern": {
+      "type": "monthly",
+      "interval": 1,
+      "dayOfMonth":"14",
+      "index": "first,second,third,fourth,last",
+      "daysOfWeek": [
+        "Monday"
+      ]
+    }
