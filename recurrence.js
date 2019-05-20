@@ -1,8 +1,6 @@
-const startDate = '2019-03-15T00:00:00.000Z';
-const endDate = '2019-04-16T24:00:00.000Z'; //on case
-const occurences = 1; //after case
-const interval = 2; //every case
-const daysOfWeek = ['Monday','Wednesday', 'Friday']; //for weekly and monthly
+
+    
+
 
 let moment =require('moment');
 function convertDaysToNum(dates){
@@ -37,6 +35,32 @@ function convertDaysToNum(dates){
     })
 }
 
+function convertIndexToNum(index){
+    let indexNum;
+    switch(index){
+        case 'first':
+        indexNum= 1;
+        break;
+
+        case 'second':
+        indexNum= 2;
+        break;
+
+        case 'third':
+        indexNum= 3;
+        break;
+
+        case 'fourth':
+        indexNum= 4;
+        break;
+
+        case 'last':
+        indexNum = 5;
+    }
+
+    return indexNum;
+}
+
 function calculateDatesDaily(startDate, interval, occurences, endDate){
     let currentDt = new Date(startDate);
     let datesArr = [];
@@ -57,7 +81,7 @@ function calculateDatesDaily(startDate, interval, occurences, endDate){
     console.log("dates array",datesArr);
 }
 
-function calculateDatesWeekly(startDate, interval, daysOfWeek, occurences, endDate){
+function calculateDatesWeekly2(startDate, interval, daysOfWeek, occurences, endDate){
     let currentDt = new Date(startDate);
     console.log(currentDt)
     let daysOfWeekArr = convertDaysToNum(daysOfWeek);
@@ -136,34 +160,114 @@ function calculateDatesWeekly(startDate, interval, daysOfWeek, occurences, endDa
 }
 
 function calculateDatesMonthly(startDate, interval, daysOfWeek, index, dayOfMonth, endDate){
-    let currentDt = new Date(startDate);
-    let endDt = new Date(endDate);
-    //let dayWeek = convertDaysToNum([daysOfWeek[0]]);
-    //let daysOfWeekArrLength = daysOfWeekArr.length;
-    //let day = dayOfMonth;
+    let currentDt = moment(startDate).utcOffset('+05:30').format();
+    console.log(currentDt);
+    let endDt = moment(endDate).utcOffset('+05:30').format();
     let datesArr = [];
+    let time = moment(currentDt).format('HH:mm:ss');
+    //console.log(time)
 
     if(dayOfMonth){
         while(moment(currentDt).isSameOrBefore(endDt)){
-            datesArr.push(new Date(currentDt));
-            currentDt = moment(currentDt).add(1, 'months').utc().format();
+            currentDt = moment(currentDt).format('YYYY-MM-DD');
+            datesArr.push(moment(currentDt+'T'+time+'+05:30').utc().format());
+            currentDt = moment(currentDt).add(interval, 'months').format();
         }
     }else if(daysOfWeek && index){
-        console.log(moment(startDate).utc().startOf('month').startOf('isoWeek').format());
+        let indexNum = convertIndexToNum(index);
+        let dayOfWeek = convertDaysToNum([daysOfWeek[0]])
+        if(index === 'last'){
+            while(moment(currentDt).isSameOrBefore(endDt)){
+            let endOfMonth = moment(currentDt).endOf('month').startOf('day');
+            let day = endOfMonth.day();
+            switch(day){
+                case 0:
+                currentDt = moment(endOfMonth).subtract(7-dayOfWeek, 'days');
+                break;
+
+                default:
+                currentDt = moment(endOfMonth).subtract(day-dayOfWeek, 'days');
+                break;
+            }
+            if(currentDt.month() !== endOfMonth.month()){
+                currentDt = currentDt.subtract(1,'w');
+            }
+            currentDt = moment(currentDt).format('YYYY-MM-DD');
+            datesArr.push(moment(currentDt+'T'+time+'+05:30').utc().format());
+            currentDt = moment(currentDt).add(interval, 'months').format();
+            }
+        }else{
+            while(moment(currentDt).isSameOrBefore(endDt)){
+            let startOfMonth = moment(currentDt).utc().startOf('month').startOf('isoWeek').add(dayOfWeek - 1,'d');
+            currentDt = moment(currentDt).utc().startOf('month').startOf('isoWeek').add(indexNum,'w').add(dayOfWeek - 1,'d');
+
+            if(startOfMonth.month() === currentDt.month()){
+                currentDt = currentDt.subtract(indexNum, 'w');
+            }
+            currentDt = moment(currentDt).format('YYYY-MM-DD');
+            datesArr.push(moment(currentDt+'T'+time+'+05:30').utc().format());
+            currentDt = moment(currentDt).add(interval, 'months').format();
+        }
+        }
+        
     }
-    //console.log(datesArr);
-    //let datesArr = [];
-    //let lastAndFirstDayDiff = (7 - daysOfWeekArr[daysOfWeekArrLength -1]) + daysOfWeekArr[0] + (7*(interval-1));
-
-
+    console.log(datesArr);
+    //console.log(moment(datesArr[0]).utc().format('YYYY-MM-DD').toString())
 }
 
-// let starTim = new Date().getTime();
-// for(let i=0;i<100;i++){
-    //calculateDatesWeekly(startDate, interval, daysOfWeek, null, endDate);
-// }
-// let endTim = new Date().getTime();
-// console.log('time taken ',endTim - starTim)
+function calculateDatesWeekly(startDt, interval, daysOfWeek, occurences, endDt){
+    let startDate = moment(startDt).utcOffset('+05:30').format();
+    console.log(startDate)
+    let currentDt = new Date(startDt);
+    //console.log(currentDt)
+    let endDate = endDt;
+    let daysOfWeekArr = convertDaysToNum(daysOfWeek);
+    let daysOfWeekArrLength = daysOfWeekArr.length;
+    let datesArr = [];
+    let lastAndFirstDayDiff = (7 - daysOfWeekArr[daysOfWeekArrLength -1]) + daysOfWeekArr[0] + (7*(interval-1));
+        let compare = currentDt - new Date(endDate);
+        if(currentDt.getDay() !== daysOfWeekArr[0]){
+            for(let i=daysOfWeekArr.indexOf(currentDt.getDay()); i<daysOfWeekArrLength;i++){
+                if(datesArr.length !== 0){
+                    let diff = daysOfWeekArr[i] - daysOfWeekArr[i-1];
+                    currentDt = new Date(currentDt.setDate(currentDt.getDate() + diff));
+                    compare = currentDt - new Date(endDate);
+                }
+                if(compare < 0){
+                    datesArr.push(new Date(currentDt));
+                }else{
+                    break;
+                }
+            }
+            
+        }
+        while(compare < 0){
+            for(let i=0; i<daysOfWeekArrLength;i++){
+                if(i === 0 && datesArr.length !==0 ){
+                    currentDt = new Date(currentDt.setDate(currentDt.getDate() + lastAndFirstDayDiff));
+                    compare = currentDt - new Date(endDate);
+                }
+                else if(datesArr.length !== 0){
+                    let diff = daysOfWeekArr[i] - daysOfWeekArr[i-1];
+                    currentDt = new Date(currentDt.setDate(currentDt.getDate() + diff));
+                    compare = currentDt - new Date(endDate);
+                }
+                if(compare < 0){
+                    datesArr.push(new Date(currentDt));
+                }else{
+                    break;
+                }
+            }
+        }
+    console.log(datesArr);
+}
 
+const startDate = '2019-05-14T18:00:00.000Z';
+const endDate = '2019-06-28T18:00:00.000Z'; //on case
+let timeZone = '+05:30';
+const occurences = 1; //after case
+const interval = 1; //every case
+const daysOfWeek = ['Tuesday']; //for weekly and monthly
 let index = 'first';
-calculateDatesMonthly(startDate, interval, daysOfWeek, index, null, endDate);
+calculateDatesWeekly(startDate, interval, daysOfWeek,null, endDate);
+//calculateDatesMonthly(startDate, interval, daysOfWeek, index, 14, endDate);
