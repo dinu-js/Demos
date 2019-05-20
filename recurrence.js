@@ -1,7 +1,3 @@
-
-    
-
-
 let moment =require('moment');
 function convertDaysToNum(dates){
     return dates.map(day => {
@@ -161,21 +157,26 @@ function calculateDatesWeekly2(startDate, interval, daysOfWeek, occurences, endD
 
 function calculateDatesMonthly(startDate, interval, daysOfWeek, index, dayOfMonth, endDate){
     let currentDt = moment(startDate).utcOffset('+05:30').format();
-    console.log(currentDt);
+    console.log('endDt');
     let endDt = moment(endDate).utcOffset('+05:30').format();
+    console.log(endDt)
     let datesArr = [];
     let time = moment(currentDt).format('HH:mm:ss');
-    //console.log(time)
 
     if(dayOfMonth){
         while(moment(currentDt).isSameOrBefore(endDt)){
-            currentDt = moment(currentDt).format('YYYY-MM-DD');
+           
+            if(moment(currentDt).set('date', dayOfMonth).month() === moment(currentDt).month()){
+                currentDt = moment(currentDt).set('date', dayOfMonth).format('YYYY-MM-DD');
+            }else{
+                currentDt = moment(currentDt).endOf('month').format('YYYY-MM-DD');
+            }
             datesArr.push(moment(currentDt+'T'+time+'+05:30').utc().format());
             currentDt = moment(currentDt).add(interval, 'months').format();
         }
     }else if(daysOfWeek && index){
         let indexNum = convertIndexToNum(index);
-        let dayOfWeek = convertDaysToNum([daysOfWeek[0]])
+        let dayOfWeek = convertDaysToNum([daysOfWeek[0]]);
         if(index === 'last'){
             while(moment(currentDt).isSameOrBefore(endDt)){
             let endOfMonth = moment(currentDt).endOf('month').startOf('day');
@@ -197,16 +198,28 @@ function calculateDatesMonthly(startDate, interval, daysOfWeek, index, dayOfMont
             currentDt = moment(currentDt).add(interval, 'months').format();
             }
         }else{
+            let i=0;
+            console.log(endDt)
             while(moment(currentDt).isSameOrBefore(endDt)){
-            let startOfMonth = moment(currentDt).utc().startOf('month').startOf('isoWeek').add(dayOfWeek - 1,'d');
-            currentDt = moment(currentDt).utc().startOf('month').startOf('isoWeek').add(indexNum,'w').add(dayOfWeek - 1,'d');
-
-            if(startOfMonth.month() === currentDt.month()){
-                currentDt = currentDt.subtract(indexNum, 'w');
-            }
-            currentDt = moment(currentDt).format('YYYY-MM-DD');
-            datesArr.push(moment(currentDt+'T'+time+'+05:30').utc().format());
-            currentDt = moment(currentDt).add(interval, 'months').format();
+                        let startOfMonth = moment(currentDt).utc().startOf('month').startOf('isoWeek').add(dayOfWeek - 1,'d');
+                        currentDt = moment(currentDt).utc().startOf('month').startOf('isoWeek').add(indexNum,'w').add(dayOfWeek - 1,'d');
+                        console.log(moment(currentDt).utc().day())
+                        if(moment(currentDt).utc().day() === dayOfWeek[0] || 
+                        moment(currentDt).utc().day() === 0){
+                            console.log("here")
+                            currentDt = moment(currentDt).format('YYYY-MM-DD');
+                            datesArr.push(moment(currentDt+'T'+time+'+05:30').utc().format());
+                            currentDt = moment(currentDt).add(1, 'months').format();
+                        }
+                        else{
+                        if(startOfMonth.month() === currentDt.month()){
+                            currentDt = currentDt.subtract(indexNum, 'w');
+                        }
+                        currentDt = moment(currentDt).format('YYYY-MM-DD');
+                        datesArr.push(moment(currentDt+'T'+time+'+05:30').utc().format());
+                        currentDt = moment(currentDt).add(1, 'months').format();
+                }
+                //break;
         }
         }
         
@@ -214,6 +227,18 @@ function calculateDatesMonthly(startDate, interval, daysOfWeek, index, dayOfMont
     console.log(datesArr);
     //console.log(moment(datesArr[0]).utc().format('YYYY-MM-DD').toString())
 }
+
+const startDate = '2019-01-04T17:00:00.000Z';
+const endDate = '2019-02-06T18:30:00.000Z'; //on case
+let timeZone = '+05:30';
+const occurences = 1; //after case
+const interval = 1; //every case
+const daysOfWeek = ['Monday']; //for weekly and monthly
+let index = 'first';
+//calculateDatesWeekly(startDate, interval, daysOfWeek,null, endDate);
+calculateDatesMonthly(startDate, interval, daysOfWeek, index, null, endDate);
+
+
 
 function calculateDatesWeekly(startDt, interval, daysOfWeek, occurences, endDt){
     let startDate = moment(startDt).utcOffset('+05:30').format();
@@ -262,12 +287,3 @@ function calculateDatesWeekly(startDt, interval, daysOfWeek, occurences, endDt){
     console.log(datesArr);
 }
 
-const startDate = '2019-05-14T18:00:00.000Z';
-const endDate = '2019-06-28T18:00:00.000Z'; //on case
-let timeZone = '+05:30';
-const occurences = 1; //after case
-const interval = 1; //every case
-const daysOfWeek = ['Tuesday']; //for weekly and monthly
-let index = 'first';
-calculateDatesWeekly(startDate, interval, daysOfWeek,null, endDate);
-//calculateDatesMonthly(startDate, interval, daysOfWeek, index, 14, endDate);
