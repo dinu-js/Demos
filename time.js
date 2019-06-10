@@ -1,3 +1,5 @@
+const tc = require('time-slots-generator');
+
 /**
  * calculateAvailableSlotsRes - to calculate slots in final res
  * @param {Object} timeInterval  - interval of time to calculate
